@@ -6,7 +6,7 @@ require 'faker'
 
 class MessageTest < ActiveSupport::TestCase
   include Faker
-  
+
   Factory.define :user do | u |
     u.first_name 'John'
     u.last_name 'Doe'
@@ -14,14 +14,14 @@ class MessageTest < ActiveSupport::TestCase
     u.password 'password'
     u.username 'jdoe'
   end
-  
+
   Factory.define :message do |m|
     m.body Lorem.sentence
     m.user {|user| user.association(:user) }
     m.priority rand(4)
   end
 
-  
+
   def message_with_replies
     u = Factory(:user)
     parent = nil
@@ -35,7 +35,7 @@ class MessageTest < ActiveSupport::TestCase
     end
     thread
   end
-  
+
   context "Message Validation" do
     should_validate_presence_of :body, :user_id
   end
@@ -53,7 +53,7 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal %q{<a href="http://example.com">http://example.com</a>}, @message.body_for_display
     end
   end
-  
+
   context "Message Thread" do
     setup do
       @messages = message_with_replies
@@ -63,5 +63,5 @@ class MessageTest < ActiveSupport::TestCase
       assert children.all?(){|child| parent.children.include? child}
     end #should
   end #context
-  
+
 end

@@ -5,12 +5,12 @@ class Message < ActiveRecord::Base
   belongs_to :user
   belongs_to :parent
   has_many :children, :class_name  => "Message", :foreign_key => :parent_id, :dependent => :destroy
-  
+
   def descendants
     (dids=descendant_ids).blank? ? [] : self.class.find(dids)
   end
   alias :thread :descendants
-  
+
   def descendant_ids
     conn = ActiveRecord::Base.connection
     generation_array = conn.execute("select id from messages where parent_id=#{self.id}").to_enum.collect(){|x| x}.flatten
@@ -21,7 +21,7 @@ class Message < ActiveRecord::Base
     end#while !generation_array.empty?
     return desc_ids.collect(){|some_string_id| some_string_id.to_i }
   end#descendant_ids
-  
+
   named_scope :urgent,
               :conditions => "priority = #{PRIORITIES.index(:urgent)}",
               :order => "messages.created_at DESC"
@@ -33,19 +33,19 @@ class Message < ActiveRecord::Base
               lambda { |txt = '', *|
                 {:conditions => "body like '%#{txt}%'"}
               }
-  
+
   validates_presence_of :body
   validates_presence_of :user_id
   validates_length_of :body, :within => 2..140
-  
+
   def priority
     PRIORITIES[self[:priority]]
   end
-  
+
   def priority=(sym)
     self[:priority] = PRIORITIES.index(sym)
   end
-  
+
   def body_for_display
     body.gsub %r{(http://\S*)} do |url|
       %Q{<a href="#{url}">#{url}</a>}

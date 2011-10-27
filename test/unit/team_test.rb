@@ -78,7 +78,7 @@ class TeamTest < ActiveSupport::TestCase
         assert_equal 3, @team.messages.most_recent(3).count
         msgs = @team.messages.most_recent(3)
         assert_equal msgs[2].user, @users[0]
-        assert_equal msgs[1].user, @users[1]        
+        assert_equal msgs[1].user, @users[1]
       end
 
     end
